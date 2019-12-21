@@ -9,5 +9,4 @@ struct aes_ctx
   uint8_t iv[16];
 };
 
-void keyExpansion(struct aes_ctx* ctx, uint8_t* key);
 #endif // _AES_h_

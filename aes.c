@@ -58,7 +58,7 @@ static const uint8_t Rcon[15] = {
 #define getsbox(num) (sbox[num])
 #define getrsbox(num) (rsbox[num])
 
-void keyExpansion(struct aes_ctx* ctx, uint8_t* key)
+static void keyExpansion(struct aes_ctx* ctx, uint8_t* key)
 {
   unsigned i, j, k;
   uint8_t tempa[4];
