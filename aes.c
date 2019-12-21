@@ -121,3 +121,58 @@ static void keyExpansion(struct aes_ctx* ctx, uint8_t* key)
     roundKey[j + 3] = tempa[3] ^ roundKey[k + 3];
   }
 }
+
+static void addRoundKey(uint8_t round, state_t* state, const uint8_t* roundKey)
+{
+  unsigned i, j;
+  for (i = 0; i < 4; ++i)
+  {
+    for (j = 0; j < 4; ++j)
+    {
+      (*state)[i][j] ^= roundKey[(round * 16) + (i * 4) + j];
+    }
+  }
+}
+
+static void subByte(state_t* state)
+{
+  unsigned i, j;
+  for(i = 0; i < 4; ++i)
+    for(j = 0; j < 4; ++j)
+      (*state)[i][j] = getsbox((*state)[i][j]);
+}
+
+static void shiftRow(state_t* state)
+{
+  uint8_t u8tmp;
+
+  // Rotate first row 1 columns to left
+  u8tmp          = (*state)[0][1];
+  (*state)[0][1] = (*state)[1][1];
+  (*state)[1][1] = (*state)[2][1];
+  (*state)[2][1] = (*state)[3][1];
+  (*state)[3][1] = u8tmp;
+
+  // Rotate second row 2 columns to left
+  u8tmp          = (*state)[0][2];
+  (*state)[0][2] = (*state)[2][2];
+  (*state)[2][2] = u8tmp;
+
+  u8tmp          = (*state)[1][2];
+  (*state)[1][2] = (*state)[3][2];
+  (*state)[3][2] = u8tmp;
+
+  // Rotate third row 3 columns to left
+  u8tmp          = (*state)[0][3];
+  (*state)[0][3] = (*state)[3][3];
+  (*state)[3][3] = (*state)[2][3];
+  (*state)[2][3] = (*state)[1][3];
+  (*state)[1][3] = u8tmp;
+}
+
+static uint8_t xtime(uint8_t x)
+{
+  return (x<<1) ^ (((x>>7) & 1) * 0x1B);
+}
+// TODO: mixColumn()
+// TODO: ctx getter, setter and initializer
