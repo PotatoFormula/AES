@@ -58,19 +58,22 @@ static const uint8_t Rcon[15] = {
 #define getsbox(num) (sbox[num])
 #define getrsbox(num) (rsbox[num])
 
-void keyExpansion(uint8_t* roundKey, uint8_t* key) { // TODO: pass ctx to make it can handle 192, 256
+void keyExpansion(struct aes_ctx* ctx, uint8_t* key)
+{
   unsigned i, j, k;
   uint8_t tempa[4];
+  unsigned Nb = ctx->Nb, Nk = ctx->Nk, Nr = ctx->Nr;
+  uint8_t* roundKey = ctx->roundKey;
 
   //first round key is key itself
-  for (i = 0; i < 4; ++i) {
+  for (i = 0; i < Nk; ++i) {
     roundKey[(i * 4) + 0] = key[(i * 4) + 0];
     roundKey[(i * 4) + 1] = key[(i * 4) + 1];
     roundKey[(i * 4) + 2] = key[(i * 4) + 2];
     roundKey[(i * 4) + 3] = key[(i * 4) + 3];
   }
 
-  for(i = 4; i < 4 * (10 + 1); ++i) 
+  for(i = Nk; i < Nb * (Nr + 1); ++i) 
   {
     { //Previous roundKey
       k = (i - 1) * 4;
@@ -80,7 +83,7 @@ void keyExpansion(uint8_t* roundKey, uint8_t* key) { // TODO: pass ctx to make i
       tempa[3] = roundKey[k + 3];
     }
     
-    if (i % 4 == 0) 
+    if (i % Nk == 0) 
     {
       // This function shifts the 4 bytes in a word to the left once.
       // Function rotWord()
@@ -100,6 +103,16 @@ void keyExpansion(uint8_t* roundKey, uint8_t* key) { // TODO: pass ctx to make i
         tempa[3] = getsbox(tempa[3]);
       }
       tempa[0] = tempa[0] ^ Rcon[i/4];
+    }
+    if ((ctx->ver == 256) && (i % Nk == 4))
+    {
+      //Function subword()
+      {
+        tempa[0] = getsbox(tempa[0]);
+        tempa[1] = getsbox(tempa[1]);
+        tempa[2] = getsbox(tempa[2]);
+        tempa[3] = getsbox(tempa[3]);
+      }
     }
     j = i * 4; k = (i - 4) * 4;
     roundKey[j + 0] = tempa[0] ^ roundKey[k + 0];
