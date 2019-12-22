@@ -59,7 +59,7 @@ static const uint8_t Rcon[15] = {
 #define getsbox(num) (sbox[num])
 #define getrsbox(num) (rsbox[num])
 
-static void keyExpansion(struct aes_ctx* ctx, uint8_t* key)
+static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
 {
   unsigned i, j, k;
   uint8_t tempa[4];
@@ -251,7 +251,7 @@ static void invShiftRow(state_t* state)
   (*state)[3][3] = u8tmp;
 }
 
-static void cipher(state_t* state, struct aes_ctx* ctx)
+static void cipher(state_t* state, const struct aes_ctx* ctx)
 {
   unsigned Nr = ctx->Nr, round = 0;
   
@@ -268,7 +268,7 @@ static void cipher(state_t* state, struct aes_ctx* ctx)
   addRoundKey(Nr, state, ctx->roundKey);
 }
 
-static void invCipher(state_t* state, struct aes_ctx* ctx)
+static void invCipher(state_t* state, const struct aes_ctx* ctx)
 {
   unsigned Nr = ctx->Nr, round;
 
@@ -349,12 +349,12 @@ void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, uns
 // TODO: AES ECB
 void AES_ECB_encrypt(const struct aes_ctx* ctx, uint8_t* buf)
 {
-  cipher(buf, ctx);
+  cipher((state_t*)buf, ctx);
 }
 
 void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf)
 {
-  invCipher(buf, ctx);
+  invCipher((state_t*)buf, ctx);
 }
 // TODO: AES CBC
 // TODO: AES CTR
