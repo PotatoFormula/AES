@@ -250,4 +250,39 @@ static void invShiftRow(state_t* state)
   (*state)[3][3] = u8tmp;
 }
 
+static void cipher(state_t* state, struct aes_ctx* ctx)
+{
+  unsigned Nr = ctx->Nr, round = 0;
+  
+  addRoundKey(round, state, ctx->roundKey);
+  for(round = 1; round < Nr; ++round)
+  {
+    subByte(state);
+    shiftRow(state);
+    mixColumn(state);
+    addRoundKey(round, state, ctx->roundKey);
+  }
+  subByte(state);
+  shiftRow(state);
+  addRoundKey(Nr, state, ctx->roundKey);
+}
+
+static void invCipher(state_t* state, struct aes_ctx* ctx)
+{
+  unsigned Nr = ctx->Nr, round;
+
+  addRoundKey(Nr, state, ctx->roundKey);
+  for(round = (Nr - 1); round > 0; --round)
+  {
+    invShiftRow(state);
+    invSubByte(state);
+    addRoundKey(round, state, ctx->roundKey);
+    invMixColumn(state);
+  }
+  invShiftRow(state);
+  invSubByte(state);
+  addRoundKey(0, state, ctx->roundKey);
+}
+
 // TODO: ctx getter, setter and initializer
+// TODO: Public Functions
