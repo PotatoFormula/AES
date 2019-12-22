@@ -200,5 +200,19 @@ static void mixColumn(state_t* state)
   ((y<<4 & 1) * xtime(xtime(xtime(xtime(x))))) \
 )
 
+static void invMixColumn(state_t* state)
+{
+  unsigned i;
+  uint8_t a, b, c, d;
+  for (i = 0; i < 4; ++i)
+  {
+    a = (*state)[i][0]; b = (*state)[i][1]; c = (*state)[i][2]; d = (*state)[i][3];
+    (*state)[i][0] = multiply(a, 0x0e) ^ multiply(b, 0x0b) ^ multiply(c, 0x0d) ^ multiply(d, 0x09);
+    (*state)[i][1] = multiply(a, 0x09) ^ multiply(b, 0x0e) ^ multiply(c, 0x0b) ^ multiply(d, 0x0d);
+    (*state)[i][2] = multiply(a, 0x0d) ^ multiply(b, 0x09) ^ multiply(c, 0x0e) ^ multiply(d, 0x0b);
+    (*state)[i][3] = multiply(a, 0x0b) ^ multiply(b, 0x0d) ^ multiply(c, 0x09) ^ multiply(d, 0x0e);
+  }
+}
+
 // TODO: invert function
 // TODO: ctx getter, setter and initializer
