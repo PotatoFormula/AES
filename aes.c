@@ -1,8 +1,9 @@
 /*************/
 /* Includes: */
 /*************/
-#include <stdio.h>
-#include <stdint.h>
+#include <stdio.h>  // printf for debug
+#include <stdint.h> // uint8_t
+#include <string.h> // memtest
 #include "aes.h"
 
 /**********************/
@@ -284,13 +285,68 @@ static void invCipher(state_t* state, struct aes_ctx* ctx)
   addRoundKey(0, state, ctx->roundKey);
 }
 
-// TODO: xorwithiv()d
+// TODO: xorwithiv()
 
 /*********************/
 /* Public Functions: */
 /*********************/
 
 // TODO: ctx getter, setter and initializer
+void ctx_init(struct aes_ctx* ctx, const uint8_t* key, unsigned aes_version)
+{
+  ctx->Nb = 4;
+  switch (aes_version)
+  {
+    case 128 :
+      ctx->Nk = 4;
+      ctx->Nr = 10;
+      ctx->ver = 128;
+      break;
+    case 192 :
+      ctx->Nk = 6;
+      ctx->Nr = 12;
+      ctx->ver = 192;
+      break;
+    case 256 :
+      ctx->Nk = 8;
+      ctx->Nr = 14;
+      ctx->ver = 256;
+      break;
+    default :
+      printf("Error in aes.c: ctx_init(), can't pharse aes_version.\nPlease check you pass 128, 192 or 256 to this function\n");
+      return;
+  }
+  keyExpansion(ctx, key);
+}
+
+void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, unsigned aes_version)
+{
+  ctx->Nb = 4;
+  switch (aes_version)
+  {
+    case 128 :
+      ctx->Nk = 4;
+      ctx->Nr = 10;
+      ctx->ver = 128;
+      break;
+    case 192 :
+      ctx->Nk = 6;
+      ctx->Nr = 12;
+      ctx->ver = 192;
+      break;
+    case 256 :
+      ctx->Nk = 8;
+      ctx->Nr = 14;
+      ctx->ver = 256;
+      break;
+    default :
+      printf("Error in aes.c: ctx_init_iv(), can't pharse aes_version.\nPlease check you pass 128, 192 or 256 to this function\n");
+      return;
+  }
+  keyExpansion(ctx, key);
+  memcpy(ctx->iv, iv, 16);
+}
+
 // TODO: AES ECB
 // TODO: AES CBC
 // TODO: AES CTR
