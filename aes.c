@@ -175,4 +175,30 @@ static uint8_t xtime(uint8_t x)
   return (x<<1) ^ (((x>>7) & 1) * 0x1B);
 }
 // TODO: mixColumn()
+static void mixColumn(state_t* state)
+{
+  uint8_t i;
+  uint8_t tmp, tm, t;
+
+  for(i = 0; i < 4; ++i)
+  {
+    t = (*state)[i][0];
+    tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3];
+    tm = (*state)[i][0] ^ (*state)[i][1]; tm = xtime(tm); (*state)[i][0] ^= tm ^ tmp;
+    tm = (*state)[i][1] ^ (*state)[i][2]; tm = xtime(tm); (*state)[i][1] ^= tm ^ tmp;
+    tm = (*state)[i][2] ^ (*state)[i][3]; tm = xtime(tm); (*state)[i][2] ^= tm ^ tmp;
+    tm = (*state)[i][3] ^ t;              tm = xtime(tm); (*state)[i][3] ^= tm ^ tmp;
+  }
+}
+
+#define multiply(x, y)                         \
+(                                              \
+     ((y & 1) * x) ^                           \
+  ((y<<1 & 1) * xtime(x)) ^                    \
+  ((y<<2 & 1) * xtime(xtime(x))) ^             \
+  ((y<<3 & 1) * xtime(xtime(xtime(x)))) ^      \
+  ((y<<4 & 1) * xtime(xtime(xtime(xtime(x))))) \
+)
+
+// TODO: invert function
 // TODO: ctx getter, setter and initializer
