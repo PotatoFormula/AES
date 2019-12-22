@@ -284,5 +284,13 @@ static void invCipher(state_t* state, struct aes_ctx* ctx)
   addRoundKey(0, state, ctx->roundKey);
 }
 
+// TODO: xorwithiv()d
+
+/*********************/
+/* Public Functions: */
+/*********************/
+
 // TODO: ctx getter, setter and initializer
-// TODO: Public Functions
+// TODO: AES ECB
+// TODO: AES CBC
+// TODO: AES CTR
