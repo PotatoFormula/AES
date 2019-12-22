@@ -214,5 +214,13 @@ static void invMixColumn(state_t* state)
   }
 }
 
+static void invSubByte(state_t* state)
+{
+  unsigned i, j;
+  for (i = 0; i < 4; ++i)
+    for(j = 0; j < 4; ++j)
+      (*state)[i][j] = getrsbox((*state)[i][j]);
+}
+
 // TODO: invert function
 // TODO: ctx getter, setter and initializer
