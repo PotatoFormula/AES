@@ -222,5 +222,32 @@ static void invSubByte(state_t* state)
       (*state)[i][j] = getrsbox((*state)[i][j]);
 }
 
-// TODO: invert function
+static void invShiftRow(state_t* state)
+{
+  uint8_t u8tmp;
+  
+  // Rotate first row 1 columns to right
+  u8tmp = (*state)[3][1];
+  (*state)[3][1] = (*state)[2][1];
+  (*state)[2][1] = (*state)[1][1];
+  (*state)[1][1] = (*state)[0][1];
+  (*state)[0][1] = u8tmp;
+
+  // Rotate second row 2 columns to right
+  u8tmp = (*state)[0][2];
+  (*state)[0][2] = (*state)[2][2];
+  (*state)[2][2] = u8tmp;
+
+  u8tmp = (*state)[1][2];
+  (*state)[1][2] = (*state)[3][2];
+  (*state)[3][2] = u8tmp;
+
+  // Rotate third row 3 columns to right
+  u8tmp = (*state)[0][3];
+  (*state)[0][3] = (*state)[1][3];
+  (*state)[1][3] = (*state)[2][3];
+  (*state)[2][3] = (*state)[3][3];
+  (*state)[3][3] = u8tmp;
+}
+
 // TODO: ctx getter, setter and initializer
