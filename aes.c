@@ -291,7 +291,6 @@ static void invCipher(state_t* state, struct aes_ctx* ctx)
 /* Public Functions: */
 /*********************/
 
-// TODO: ctx getter, setter and initializer
 void ctx_init(struct aes_ctx* ctx, const uint8_t* key, unsigned aes_version)
 {
   ctx->Nb = 4;
@@ -348,5 +347,14 @@ void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, uns
 }
 
 // TODO: AES ECB
+void AES_ECB_encrypt(const struct aes_ctx* ctx, uint8_t* buf)
+{
+  cipher(buf, ctx);
+}
+
+void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf)
+{
+  invCipher(buf, ctx);
+}
 // TODO: AES CBC
 // TODO: AES CTR
