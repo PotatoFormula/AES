@@ -363,6 +363,36 @@ void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf)
   invCipher((state_t*)buf, ctx);
 }
 
-// TODO: AES CBC
+void AES_CBC_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint32_t i;
+  uint8_t *iv = ctx->iv;
+
+  for (i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    xorWithIv(buf, iv);
+    cipher((state_t*)buf, ctx);
+    iv = buf;
+    buf += AES_BLOCKLEN;
+  }
+
+  //Store iv in aes_ctx
+  memcpy(ctx->iv, iv, AES_BLOCKLEN);
+}
+
+void AES_CBC_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint32_t i;
+  uint8_t storedIv[AES_BLOCKLEN];
+
+  for (i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    memcpy(storedIv, buf, AES_BLOCKLEN);
+    invCipher((state_t*)buf, ctx);
+    xorWithIv(buf, ctx->iv);
+    memcpy(ctx->iv, storedIv, AES_BLOCKLEN);
+    buf += AES_BLOCKLEN;
+  }
+}
 
 // TODO: AES CTR
