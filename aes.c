@@ -9,6 +9,8 @@
 /**********************/
 /* Private variables: */
 /**********************/
+//State lengh, in AES is 16
+#define AES_BLOCKLEN 16
 typedef uint8_t state_t[4][4];
 
 static const uint8_t sbox[256] = {
@@ -130,7 +132,7 @@ static void addRoundKey(uint8_t round, state_t* state, const uint8_t* roundKey)
   {
     for (j = 0; j < 4; ++j)
     {
-      (*state)[i][j] ^= roundKey[(round * 16) + (i * 4) + j];
+      (*state)[i][j] ^= roundKey[(round * AES_BLOCKLEN) + (i * 4) + j];
     }
   }
 }
@@ -285,7 +287,12 @@ static void invCipher(state_t* state, const struct aes_ctx* ctx)
   addRoundKey(0, state, ctx->roundKey);
 }
 
-// TODO: xorwithiv()
+static void xorWithIv(uint8_t* buf, const uint8_t* iv)
+{
+  unsigned i;
+  for (i = 0; i < AES_BLOCKLEN; ++i)
+    buf[i] ^= buf[i] ^ iv[i];
+}
 
 /*********************/
 /* Public Functions: */
@@ -343,10 +350,9 @@ void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, uns
       return;
   }
   keyExpansion(ctx, key);
-  memcpy(ctx->iv, iv, 16);
+  memcpy(ctx->iv, iv, AES_BLOCKLEN);
 }
 
-// TODO: AES ECB
 void AES_ECB_encrypt(const struct aes_ctx* ctx, uint8_t* buf)
 {
   cipher((state_t*)buf, ctx);
@@ -356,5 +362,7 @@ void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf)
 {
   invCipher((state_t*)buf, ctx);
 }
+
 // TODO: AES CBC
+
 // TODO: AES CTR
