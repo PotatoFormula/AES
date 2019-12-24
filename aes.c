@@ -395,4 +395,35 @@ void AES_CBC_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
   }
 }
 
-// TODO: AES CTR
+//Symmetric cipher, encrypt and decrypt use same function
+void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t counter[AES_BLOCKLEN];
+
+  uint32_t i;
+  uint8_t ctri;
+
+  for (i = 0, ctri = AES_BLOCKLEN; i < buf_len; ++i, ++ctri)
+  {
+    //need regen counter
+    if (ctri == AES_BLOCKLEN)
+    {
+      memcpy(counter, ctx->iv, AES_BLOCKLEN);
+      cipher(counter, ctx);
+
+      //Increase iv
+      for(ctri = (AES_BLOCKLEN - 1); ctri >= 0; --ctri)
+      {
+        if(ctx->iv[ctri] == 255)
+        {
+          ctx->iv[ctri] = 0;
+          continue;
+        }
+
+        ctx->iv[ctri] += 1;
+        break;
+      }
+    }
+    buf[i] = (buf[i] ^ counter[i]);
+  }
+}

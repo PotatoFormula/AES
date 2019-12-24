@@ -17,4 +17,6 @@ void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf);
 
 void AES_CBC_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 void AES_CBC_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
+
+void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 #endif // _AES_h_
