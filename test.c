@@ -51,6 +51,7 @@ static int test_xcrypt_ctr(const char* xcrypt)
 
 int main()
 {
-
+  test_encrypt_ctr();
+  test_decrypt_ctr();
   return 0;
 }

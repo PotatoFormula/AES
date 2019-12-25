@@ -105,7 +105,7 @@ static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
         tempa[2] = getsbox(tempa[2]);
         tempa[3] = getsbox(tempa[3]);
       }
-      tempa[0] = tempa[0] ^ Rcon[i/4];
+      tempa[0] = tempa[0] ^ Rcon[i/Nk];
     }
     if ((ctx->ver == 256) && (i % Nk == 4))
     {
@@ -423,7 +423,8 @@ void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
         ctx->iv[ctri] += 1;
         break;
       }
+      ctri = 0;
     }
-    buf[i] = (buf[i] ^ counter[i]);
+    buf[i] = (buf[i] ^ counter[ctri]);
   }
 }
