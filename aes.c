@@ -117,11 +117,16 @@ static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
         tempa[3] = getsbox(tempa[3]);
       }
     }
-    j = i * 4; k = (i - 4) * 4;
+    j = i * 4; k = (i - Nk) * 4;
     roundKey[j + 0] = tempa[0] ^ roundKey[k + 0];
     roundKey[j + 1] = tempa[1] ^ roundKey[k + 1];
     roundKey[j + 2] = tempa[2] ^ roundKey[k + 2];
     roundKey[j + 3] = tempa[3] ^ roundKey[k + 3];
+  }
+
+  for( i = 0; i < 240; ++i)
+  {
+    printf("%x ", roundKey[i]);
   }
 }
 
