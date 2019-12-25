@@ -124,10 +124,10 @@ static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
     roundKey[j + 3] = tempa[3] ^ roundKey[k + 3];
   }
 
-  for( i = 0; i < 240; ++i)
-  {
-    printf("%x ", roundKey[i]);
-  }
+  // for( i = 0; i < 240; ++i)
+  // {
+  //   printf("%x ", roundKey[i]);
+  // }
 }
 
 static void addRoundKey(uint8_t round, state_t* state, const uint8_t* roundKey)
