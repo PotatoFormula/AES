@@ -409,7 +409,7 @@ void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     if (ctri == AES_BLOCKLEN)
     {
       memcpy(counter, ctx->iv, AES_BLOCKLEN);
-      cipher(counter, ctx);
+      cipher((state_t*)counter, ctx);
 
       //Increase iv
       for(ctri = (AES_BLOCKLEN - 1); ctri >= 0; --ctri)
