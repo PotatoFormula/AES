@@ -76,5 +76,7 @@ static int test_encrypt_ecb(void)
 int main()
 {
   test_encrypt_ecb();
+  test_encrypt_ctr();
+  test_decrypt_ctr();
   return 0;
 }
