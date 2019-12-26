@@ -296,7 +296,7 @@ static void xorWithIv(uint8_t* buf, const uint8_t* iv)
 {
   unsigned i;
   for (i = 0; i < AES_BLOCKLEN; ++i)
-    buf[i] ^= buf[i] ^ iv[i];
+    buf[i] = buf[i] ^ iv[i];
 }
 
 /*********************/
