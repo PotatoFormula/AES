@@ -60,74 +60,56 @@ static const uint8_t Rcon[15] = {
 
 #define getsbox(num) (sbox[num])
 #define getrsbox(num) (rsbox[num])
+#define rotword(word) uint8_t __tmp = word[0];\
+                              word[0] = word[1];\
+                              word[1] = word[2];\
+                              word[2] = word[3];\
+                              word[3] = __tmp
 
 static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
 {
   unsigned i, j, k;
-  uint8_t tempa[4];
+  uint8_t preRoundKey[4];
   unsigned Nb = ctx->Nb, Nk = ctx->Nk, Nr = ctx->Nr;
-  uint8_t* roundKey = ctx->roundKey;
+  uint8_t *roundKey = ctx->roundKey;
 
   //first round key is key itself
-  for (i = 0; i < Nk; ++i) {
-    roundKey[(i * 4) + 0] = key[(i * 4) + 0];
-    roundKey[(i * 4) + 1] = key[(i * 4) + 1];
-    roundKey[(i * 4) + 2] = key[(i * 4) + 2];
-    roundKey[(i * 4) + 3] = key[(i * 4) + 3];
-  }
-
-  for(i = Nk; i < Nb * (Nr + 1); ++i) 
+  memcpy(roundKey, key, Nk * 4);
+  
+  for(i = Nk; i < Nb * (Nr + 1); ++i)
   {
-    { //Previous roundKey
-      k = (i - 1) * 4;
-      tempa[0] = roundKey[k + 0];
-      tempa[1] = roundKey[k + 1];
-      tempa[2] = roundKey[k + 2];
-      tempa[3] = roundKey[k + 3];
-    }
+    memcpy(preRoundKey, roundKey + (i - 1) * 4, 4);
     
-    if (i % Nk == 0) 
+    if (i % Nk == 0)
     {
-      // This function shifts the 4 bytes in a word to the left once.
-      // Function rotWord()
-      {
-        uint8_t u8tmp = tempa[0];
-        tempa[0] = tempa[1];
-        tempa[1] = tempa[2];
-        tempa[2] = tempa[3];
-        tempa[3] = u8tmp;
-      }
-
-      //subword()
-      {
-        tempa[0] = getsbox(tempa[0]);
-        tempa[1] = getsbox(tempa[1]);
-        tempa[2] = getsbox(tempa[2]);
-        tempa[3] = getsbox(tempa[3]);
-      }
-      tempa[0] = tempa[0] ^ Rcon[i/Nk];
+      // for(int index = 0; index < 4; ++index)
+      //   printf("%x ", preRoundKey[index]);
+      // printf("\n");
+      rotword(preRoundKey);
+      // for(int index = 0; index < 4; ++index)
+      //   printf("%x ", preRoundKey[index]);
+      // printf("\n");
+      
+      for(int index = 0; index < 4; ++index)
+        preRoundKey[index] = getsbox(preRoundKey[index]);
+      
+      preRoundKey[0] = preRoundKey[0] ^ Rcon[i/Nk];
     }
+
     if ((ctx->ver == 256) && (i % Nk == 4))
     {
-      //Function subword()
-      {
-        tempa[0] = getsbox(tempa[0]);
-        tempa[1] = getsbox(tempa[1]);
-        tempa[2] = getsbox(tempa[2]);
-        tempa[3] = getsbox(tempa[3]);
-      }
+      for(int index = 0; index < 4; ++index)
+        preRoundKey[index] = getsbox(preRoundKey[index]);
     }
-    j = i * 4; k = (i - Nk) * 4;
-    roundKey[j + 0] = tempa[0] ^ roundKey[k + 0];
-    roundKey[j + 1] = tempa[1] ^ roundKey[k + 1];
-    roundKey[j + 2] = tempa[2] ^ roundKey[k + 2];
-    roundKey[j + 3] = tempa[3] ^ roundKey[k + 3];
+
+    j = i * 4; k = (i- Nk) * 4;
+    for(int index = 0; index < 4; ++index)
+      roundKey[j + index] = roundKey[k + index] ^ preRoundKey[index];
   }
 
-  // for( i = 0; i < 240; ++i)
-  // {
-  //   printf("%x ", roundKey[i]);
-  // }
+  // for(int index = 0; index < 240; ++index)
+  //   printf("%x ", roundKey[index]);
+  // printf("\n");
 }
 
 static void addRoundKey(uint8_t round, state_t* state, const uint8_t* roundKey)

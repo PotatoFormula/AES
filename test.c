@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h> //memtest
+#include <getopt.h> //subcommand parser
 #include "aes.h"
 
 //TODO: Padding
@@ -155,8 +156,8 @@ static int test_decrypt_ecb(void)
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-
+  test_encrypt_ecb();
   return 0;
 }
