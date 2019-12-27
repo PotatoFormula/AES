@@ -7,6 +7,21 @@
 //TODO: Argument parser
 //TODO: File I/O
 
+typedef enum {ECB128, ECB192, ECB256, CBC128, CBC192, CBC256, CTR128, CTR192, CTR256} MODE;
+typedef enum {encrypt, decrypt} WORK;
+
+struct aes_opt
+{
+  MODE mode;
+  WORK work;
+    
+  uint8_t iv[16];
+  char kfile[255];
+  uint8_t key[32];
+  char input_file_name[255];
+  char output_file_name[255];
+};
+
 static int test_xcrypt_ctr(const char* xcrypt);
 static int test_encrypt_ctr(void)
 {
@@ -156,8 +171,132 @@ static int test_decrypt_ecb(void)
     }
 }
 
+void test_all()
+{
+  test_encrypt_cbc();
+  test_decrypt_cbc();
+  test_encrypt_ctr();
+  test_decrypt_ctr();
+  test_encrypt_ecb();
+  test_decrypt_ecb();
+}
+
+int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
+{
+
+  struct option long_options[] = {
+
+    {"enc", 0, NULL, 'e'},
+    {"dec", 0, NULL, 'd'},
+    {"ecb128", 0, NULL, '1'}, 
+    {"ecb192", 0, NULL, '2'}, 
+    {"ecb256", 0, NULL, '3'}, 
+    {"cbc128", 0, NULL, '4'}, 
+    {"cbc192", 0, NULL, '5'}, 
+    {"cbc256", 0, NULL, '6'}, 
+    {"ctr128", 0, NULL, '7'}, 
+    {"ctr192", 0, NULL, '8'}, 
+    {"ctr256", 0, NULL, '9'},
+    {"iv", 1, NULL, 'i'},
+    {"kfile", 1, NULL, 'f'},
+    {"K", 1, NULL, 'K'},
+    {"in", 1, NULL, 'n'},
+    {"out", 1, NULL, 'o'},
+
+
+    {0, 0, 0, 0}
+
+  };
+
+
+  char c;
+  int size;
+  
+  while( (c = getopt_long (argc, argv, "ed123456789i:f:k:n:o:", long_options, NULL)) != -1)
+  {
+    switch (c)
+    {
+      case 'e':
+        user_opt->work = encrypt;
+        break; 
+      case 'd':
+        user_opt->work = decrypt;
+        break; 
+      case '1':
+        user_opt->mode = ECB128;
+        break; 
+      case '2':
+        user_opt->mode = ECB192;
+        break; 
+      case '3':
+        user_opt->mode = ECB256;
+        break; 
+      case '4':
+        user_opt->mode = CBC128;
+        break;
+      case '5':
+        user_opt->mode = CBC192;
+        break; 
+      case '6':
+        user_opt->mode = CBC256;
+        break; 
+      case '7':
+        user_opt->mode = CTR128;
+        break;
+      case '8':
+        user_opt->mode = CTR192;
+        break;
+      case '9':
+        user_opt->mode = CTR256;
+        break;
+      case 'i':
+        memcpy(user_opt->iv, optarg, 16);
+        break;
+      case 'f':
+        size = sizeof(optarg);
+        if (size > 255) 
+        {
+          printf("kfile name too long\n");
+          return -1;
+        }
+        memcpy(user_opt->kfile, optarg, size);
+        break;
+      case 'K':
+        size = sizeof(optarg);
+        if (size > 32)
+        {
+          printf("This key is too long, only take first 32bytes\n");
+          memcpy(user_opt->key, optarg, 32);
+        } else {
+          memcpy(user_opt->key, optarg, size);
+        }
+        break;
+      case 'n':
+        size = sizeof(optarg);
+        if (size > 255)
+        {
+          printf("in file name too long\n");
+          return -1;
+        }
+        memcpy(user_opt->input_file_name, optarg, size);
+        break;
+      case 'o':
+        size = sizeof(optarg);
+        if (size > 255)
+        {
+          printf("out file name too long\n");
+          return -1;
+        }
+        memcpy(user_opt->output_file_name, optarg, size);
+        break;
+    }
+  }
+}
+
 int main(int argc, char *argv[])
 {
-  test_encrypt_ecb();
+  struct aes_opt user_opt;
+  get_user_opt(argc, argv, &user_opt);
+
   return 0;
 }

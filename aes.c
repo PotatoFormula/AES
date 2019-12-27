@@ -82,13 +82,7 @@ static void keyExpansion(struct aes_ctx* ctx, const uint8_t* key)
     
     if (i % Nk == 0)
     {
-      // for(int index = 0; index < 4; ++index)
-      //   printf("%x ", preRoundKey[index]);
-      // printf("\n");
       rotword(preRoundKey);
-      // for(int index = 0; index < 4; ++index)
-      //   printf("%x ", preRoundKey[index]);
-      // printf("\n");
       
       for(int index = 0; index < 4; ++index)
         preRoundKey[index] = getsbox(preRoundKey[index]);
