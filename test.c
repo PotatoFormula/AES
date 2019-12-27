@@ -4,7 +4,7 @@
 #include "aes.h"
 
 //TODO: Padding
-//TODO: Argument parser
+
 //TODO: File I/O
 
 typedef enum {ECB128, ECB192, ECB256, CBC128, CBC192, CBC256, CTR128, CTR192, CTR256} MODE;
@@ -212,7 +212,7 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
   char c;
   int size;
   
-  while( (c = getopt_long (argc, argv, "ed123456789i:f:k:n:o:", long_options, NULL)) != -1)
+  while( (c = getopt_long (argc, argv, "ed123456789i:f:K:n:o:", long_options, NULL)) != -1)
   {
     switch (c)
     {
@@ -297,6 +297,10 @@ int main(int argc, char *argv[])
 {
   struct aes_opt user_opt;
   get_user_opt(argc, argv, &user_opt);
-
+  
+  printf("%d %d %s %s\n", user_opt.mode, user_opt.work, user_opt.input_file_name, user_opt.output_file_name);
+  for(int i = 0; i < 16; ++i)
+    printf("%x ", user_opt.iv[i]);
+  printf("\n");
   return 0;
 }
