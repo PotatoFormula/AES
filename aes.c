@@ -341,7 +341,7 @@ void AES_ECB_decrypt_buffer(struct aes_ctx* ctx, uint8_t* buf, uint32_t buf_len)
 {
   for (int i = 0; i < buf_len; i += AES_BLOCKLEN)
   {
-    cipher((state_t*)buf, ctx);
+    invCipher((state_t*)buf, ctx);
     buf += AES_BLOCKLEN;
   }
 }
