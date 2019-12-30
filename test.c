@@ -5,7 +5,6 @@
 
 //TODO: Padding
 
-//TODO: File I/O
 
 static int test_xcrypt_ctr(const char* xcrypt);
 static int test_encrypt_ctr(void)
@@ -335,6 +334,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 void encrypt_file(struct aes_ctx *ctx)
 {
   unsigned buf_len = 4096;
+  unsigned padding_len;
   uint8_t buffer[buf_len];
   size_t size;
   void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
@@ -367,8 +367,20 @@ void encrypt_file(struct aes_ctx *ctx)
     size = fread(buffer, 1, buf_len, ctx->infile);
 
     //Padding if reach end of file
+    if (size < buf_len)
+    {
+      padding_len = buf_len % 16;
+      if (padding_len == 0)
+        padding_len = 16;
 
-    
+      for (int i = 0; i < padding_len; ++i)
+      {
+        buffer[size] = padding_len;
+        ++size;
+      }
+    }
+
+    cipher(ctx, buffer, size);
   }
   
 }
