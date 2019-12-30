@@ -8,7 +8,7 @@
 //TODO: File I/O
 
 typedef enum {ECB128, ECB192, ECB256, CBC128, CBC192, CBC256, CTR128, CTR192, CTR256} MODE;
-typedef enum {encrypt, decrypt} WORK;
+typedef enum {enc, dec} WORK;
 
 struct aes_opt
 {
@@ -211,16 +211,17 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
 
   char c;
   int size;
+  FILE * fptr;
   
   while( (c = getopt_long (argc, argv, "ed123456789i:f:K:n:o:", long_options, NULL)) != -1)
   {
     switch (c)
     {
       case 'e':
-        user_opt->work = encrypt;
+        user_opt->work = enc;
         break; 
       case 'd':
-        user_opt->work = decrypt;
+        user_opt->work = dec;
         break; 
       case '1':
         user_opt->mode = ECB128;
@@ -291,6 +292,39 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
         break;
     }
   }
+
+  return 0;
+}
+
+void parse_opt(struct aes_opt *user_opt)
+{
+  switch (user_opt->work)
+  {
+  case enc:
+    printf("set enc\n");
+    break;
+
+  case dec:
+    printf("set dec\n");
+    break;
+  
+  default:
+    printf("You have to choose encrypt or decrypt by --enc or --dec\n");
+    break;
+  }
+
+  switch (user_opt->mode)
+  {
+  case ECB128:
+    printf("ecb128\n");
+    break;
+  
+  default:
+    printf("No mode been choose\n");
+    break;
+  }
+
+  
 }
 
 int main(int argc, char *argv[])
@@ -302,5 +336,7 @@ int main(int argc, char *argv[])
   for(int i = 0; i < 16; ++i)
     printf("%x ", user_opt.iv[i]);
   printf("\n");
+
+  parse_opt(&user_opt);
   return 0;
 }
