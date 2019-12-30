@@ -313,12 +313,12 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
       break;
 
     case 192:
-      if (fread(key, 1, 24, kfile) < 16)
+      if (fread(key, 1, 24, kfile) < 24)
         printf("The key in the kfile file is too short, remaining key will be 0\n");
       break;
 
     case 256:
-      if (fread(key, 1, 32, kfile) < 16)
+      if (fread(key, 1, 32, kfile) < 32)
         printf("The key in the kfile file is too short, remaining key will be 0\n");
       break;
 
