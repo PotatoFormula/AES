@@ -297,7 +297,7 @@ void ctx_init(struct aes_ctx* ctx, const uint8_t* key)
       ctx->Nr = 14;
       break;
     default :
-      printf("Error in aes.c: ctx_init(), can't pharse aes_version.\nPlease check you pass 128, 192 or 256 to this function\n");
+      printf("Error in aes.c: ctx_init(), can't pharse aes_version. Please check you pass 128, 192 or 256 to this function\n");
       return;
   }
   keyExpansion(ctx, key);
