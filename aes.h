@@ -13,6 +13,8 @@ struct aes_ctx
   WORK work;
   uint8_t roundKey[240];
   uint8_t iv[16];
+  FILE * infile;
+  FILE * outfile;
 };
 
 void ctx_init(struct aes_ctx* ctx, const uint8_t* key);

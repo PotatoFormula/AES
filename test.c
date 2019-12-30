@@ -199,8 +199,6 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
   int size;
   uint8_t key[32];
   FILE * kfile;
-  FILE * infile;
-  FILE * outfile;
   
   while( (c = getopt_long (argc, argv, "ed123456789i:f:K:n:o:", long_options, NULL)) != -1)
   {
@@ -282,7 +280,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
           printf("in file name too long\n");
           return -1;
         }
-        else if ((infile = fopen(optarg, "rb+")) == NULL)
+        else if ((ctx->infile = fopen(optarg, "rb+")) == NULL)
         {
           printf("Can't open infile: %s\n", optarg);
         }
@@ -294,7 +292,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
           printf("out file name too long\n");
           return -1;
         }
-        else if ((outfile = fopen(optarg, "wb")) == NULL)
+        else if ((ctx->outfile = fopen(optarg, "wb")) == NULL)
         {
           printf("Can't open outfile: %s\n", optarg);
         }
