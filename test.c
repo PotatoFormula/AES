@@ -302,28 +302,6 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     }
   }
 
-  //check at least 1 mode and work been choice
-  switch (ctx->mode)
-  {
-  case ECB:
-  case CBC:
-  case CTR:
-    break;
-  default:
-    printf("No cipher mode been choice, Set ECB mode by default\n");
-    ctx->mode = ECB;
-    break;
-  }
-  switch (ctx->work)
-  {
-  case enc:
-  case dec:
-    break;
-  default:
-    printf("lost --enc or --dec\n");
-    break;
-  }
-
   //read key from kfile
   if (kfile != NULL)
   {
