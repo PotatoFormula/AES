@@ -326,6 +326,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
       printf("Unknow Error in get_ctx:kfile to key\n");
       break;
     }
+    fclose(kfile);
     
     ctx_init(ctx, key);
   }
