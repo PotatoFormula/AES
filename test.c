@@ -334,11 +334,40 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 
 void encrypt_file(struct aes_ctx *ctx)
 {
-  uint8_t buffer[4112];
+  unsigned buf_len = 4096;
+  uint8_t buffer[buf_len];
   size_t size;
+  void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
 
-  while ((size = fread(buffer, 1, 4096, ctx->infile)) > 0)
+  switch (ctx->work)
   {
+  case enc:
+    switch (ctx->mode)
+    {
+      case ECB: cipher = AES_ECB_encrypt; break;
+      case CBC: cipher = AES_CBC_encrypt_buffer; break;
+      case CTR: cipher = AES_CTR_xcrypt_buffer; break;
+    }
+    break;
+  case dec:
+    switch (ctx->mode)
+    {
+      case ECB: cipher = AES_ECB_decrypt; break;
+      case CBC: cipher = AES_CBC_decrypt_buffer; break;
+      case CTR: cipher = AES_CTR_xcrypt_buffer; break;
+    }
+  
+  default:
+    printf("Can't choose aes mode\n");
+    break;
+  }
+
+  while (!feof(ctx->infile))
+  {
+    size = fread(buffer, 1, buf_len, ctx->infile);
+
+    //Padding if reach end of file
+
     
   }
   
