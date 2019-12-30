@@ -226,30 +226,39 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
         break; 
       case '1':
         user_opt->mode = ECB128;
+        user_opt->ver = 128;
         break; 
       case '2':
         user_opt->mode = ECB192;
+        user_opt->ver = 192;
         break; 
       case '3':
         user_opt->mode = ECB256;
+        user_opt->ver = 256;
         break; 
       case '4':
         user_opt->mode = CBC128;
+        user_opt->ver = 128;
         break;
       case '5':
         user_opt->mode = CBC192;
+        user_opt->ver = 192;
         break; 
       case '6':
         user_opt->mode = CBC256;
+        user_opt->ver = 256;
         break; 
       case '7':
         user_opt->mode = CTR128;
+        user_opt->ver = 128;
         break;
       case '8':
         user_opt->mode = CTR192;
+        user_opt->ver = 192;
         break;
       case '9':
         user_opt->mode = CTR256;
+        user_opt->ver = 256;
         break;
       case 'i':
         memcpy(user_opt->iv, optarg, 16);
