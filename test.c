@@ -332,10 +332,23 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
   return 0;
 }
 
+void encrypt_file(struct aes_ctx *ctx)
+{
+  uint8_t buffer[4112];
+  size_t size;
+
+  while ((size = fread(buffer, 1, 4096, ctx->infile)) > 0)
+  {
+    
+  }
+  
+}
+
 int main(int argc, char *argv[])
 {
   struct aes_ctx ctx;
   get_ctx(argc, argv, &ctx);
+  
   
   return 0;
 }
