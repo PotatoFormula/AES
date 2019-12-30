@@ -13,7 +13,7 @@ typedef enum {enc, dec} WORK;
 struct aes_opt
 {
   MODE mode;
-  uint8_t ver;
+  int ver;
   WORK work;
     
   uint8_t iv[16];
