@@ -13,10 +13,11 @@ typedef enum {enc, dec} WORK;
 struct aes_opt
 {
   MODE mode;
+  uint8_t ver;
   WORK work;
     
   uint8_t iv[16];
-  char kfile[255];
+  FILE *kfile;
   uint8_t key[32];
   char input_file_name[255];
   char output_file_name[255];
@@ -259,8 +260,13 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
         {
           printf("kfile name too long\n");
           return -1;
+        }        
+        user_opt->kfile = fopen(optarg, "rb+");
+        if (user_opt->kfile == NULL)
+        {
+          printf("Can't open kfile: %s\n", optarg);
+          return -1;
         }
-        memcpy(user_opt->kfile, optarg, size);
         break;
       case 'K':
         size = sizeof(optarg);
@@ -324,19 +330,16 @@ void parse_opt(struct aes_opt *user_opt)
     break;
   }
 
-  
+  if (user_opt->kfile != NULL)
+  {
+    printf("Now we have kfile!\n");
+  }
 }
 
 int main(int argc, char *argv[])
 {
   struct aes_opt user_opt;
   get_user_opt(argc, argv, &user_opt);
-  
-  printf("%d %d %s %s\n", user_opt.mode, user_opt.work, user_opt.input_file_name, user_opt.output_file_name);
-  for(int i = 0; i < 16; ++i)
-    printf("%x ", user_opt.iv[i]);
-  printf("\n");
-
   parse_opt(&user_opt);
   return 0;
 }
