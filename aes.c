@@ -328,14 +328,22 @@ void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv)
   memcpy(ctx->iv, iv, AES_BLOCKLEN);
 }
 
-void AES_ECB_encrypt(struct aes_ctx* ctx, uint8_t* buf, uint32_t buf_len)
+void AES_ECB_encrypt_buffer(struct aes_ctx* ctx, uint8_t* buf, uint32_t buf_len)
 {
-  cipher((state_t*)buf, ctx);
+  for (int i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    cipher((state_t*)buf, ctx);
+    buf += AES_BLOCKLEN;
+  }
 }
 
-void AES_ECB_decrypt(struct aes_ctx* ctx, uint8_t* buf, uint32_t buf_len)
+void AES_ECB_decrypt_buffer(struct aes_ctx* ctx, uint8_t* buf, uint32_t buf_len)
 {
-  invCipher((state_t*)buf, ctx);
+  for (int i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    cipher((state_t*)buf, ctx);
+    buf += AES_BLOCKLEN;
+  }
 }
 
 void AES_CBC_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
