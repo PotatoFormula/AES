@@ -325,9 +325,9 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     }
     fclose(kfile);
     
-    ctx_init(ctx, key);
   }
 
+  ctx_init(ctx, key);
   return 0;
 }
 
@@ -354,8 +354,10 @@ void encrypt_file(struct aes_ctx *ctx)
     if (size < buf_len)
     {
       padding_len = buf_len % 16;
-      if (padding_len == 0)
+      if (padding_len == 0) 
+      {
         padding_len = 16;
+      }
 
       for (int i = 0; i < padding_len; ++i)
       {
@@ -365,15 +367,55 @@ void encrypt_file(struct aes_ctx *ctx)
     }
 
     cipher(ctx, buffer, size);
+    //write to file
+    fwrite(buffer, 1, size, ctx->outfile);
   }
-  
+}
+
+void decrypt_file(struct aes_ctx *ctx)
+{
+  unsigned buf_len = 4096;
+  unsigned padding_len;
+  uint8_t buffer[buf_len];
+  size_t size;
+  void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
+
+  switch (ctx->mode)
+  {
+    case ECB: cipher = AES_ECB_decrypt_buffer; break;
+    case CBC: cipher = AES_CBC_decrypt_buffer; break;
+    case CTR: cipher = AES_CTR_xcrypt_buffer; break;
+  }
+
+  while (!feof(ctx->infile))
+  {
+    size = fread(buffer, 1, buf_len, ctx->infile);
+    
+    cipher(ctx, buffer, size);
+
+    //Depadding if reach end of file
+    if (size < buf_len)
+    {
+      padding_len = buffer[size - 1];
+
+      for (int i = padding_len; i > 0; --i)
+      {
+        printf("%d ", buffer[size]);
+        --size;
+      }
+      printf("\n");
+    }
+
+    //write to file
+    fwrite(buffer, 1, size, ctx->outfile);
+  }
 }
 
 int main(int argc, char *argv[])
 {
   struct aes_ctx ctx;
   get_ctx(argc, argv, &ctx);
-  
-  
+  if (ctx.work == enc) encrypt_file(&ctx);
+  else if(ctx.work == dec) decrypt_file(&ctx);
   return 0;
 }
