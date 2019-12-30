@@ -7,22 +7,6 @@
 
 //TODO: File I/O
 
-typedef enum {ECB128, ECB192, ECB256, CBC128, CBC192, CBC256, CTR128, CTR192, CTR256} MODE;
-typedef enum {enc, dec} WORK;
-
-struct aes_opt
-{
-  MODE mode;
-  int ver;
-  WORK work;
-    
-  uint8_t iv[16];
-  FILE *kfile;
-  uint8_t key[32];
-  char input_file_name[255];
-  char output_file_name[255];
-};
-
 static int test_xcrypt_ctr(const char* xcrypt);
 static int test_encrypt_ctr(void)
 {
@@ -50,8 +34,8 @@ static int test_xcrypt_ctr(const char* xcrypt)
                       0x30, 0xc8, 0x1c, 0x46, 0xa3, 0x5c, 0xe4, 0x11, 0xe5, 0xfb, 0xc1, 0x19, 0x1a, 0x0a, 0x52, 0xef,
                       0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
   struct aes_ctx ctx;
-    
-  ctx_init_iv(&ctx, key, iv, 256);
+  ctx.ver = 256;
+  ctx_init_iv(&ctx, key, iv);
   AES_CTR_xcrypt_buffer(&ctx, in, 64);
   
   printf("CTR %s: ", xcrypt);
@@ -80,8 +64,8 @@ static int test_encrypt_cbc(void)
                       0x30, 0xc8, 0x1c, 0x46, 0xa3, 0x5c, 0xe4, 0x11, 0xe5, 0xfb, 0xc1, 0x19, 0x1a, 0x0a, 0x52, 0xef,
                       0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
     struct aes_ctx ctx;
-
-    ctx_init_iv(&ctx, key, iv, 256);
+    ctx.ver = 256;
+    ctx_init_iv(&ctx, key, iv);
     AES_CBC_encrypt_buffer(&ctx, in, 64);
 
     printf("CBC encrypt: ");
@@ -112,8 +96,8 @@ static int test_decrypt_cbc(void)
                       0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
 //  uint8_t buffer[64];
     struct aes_ctx ctx;
-
-    ctx_init_iv(&ctx, key, iv, 256);
+    ctx.ver = 256;
+    ctx_init_iv(&ctx, key, iv);
     AES_CBC_decrypt_buffer(&ctx, in, 64);
 
     printf("CBC decrypt: ");
@@ -135,7 +119,8 @@ static int test_encrypt_ecb(void)
 
   uint8_t in[]  = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
   struct aes_ctx ctx;
-  ctx_init(&ctx, key, 256);
+  ctx.ver = 256;
+  ctx_init(&ctx, key);
   AES_ECB_encrypt(&ctx, in);
   printf("ECB encrypt: ");
   if (0 == memcmp((char*) out, (char*) in, 16)) {
@@ -157,8 +142,8 @@ static int test_decrypt_ecb(void)
 
     uint8_t out[]   = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
     struct aes_ctx ctx;
-    
-    ctx_init(&ctx, key, 256);
+    ctx.ver = 256;
+    ctx_init(&ctx, key);
     AES_ECB_decrypt(&ctx, in);
 
     printf("ECB decrypt: ");
@@ -182,7 +167,7 @@ void test_all()
   test_decrypt_ecb();
 }
 
-int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
+int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 {
 
   struct option long_options[] = {
@@ -212,56 +197,59 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
 
   char c;
   int size;
-  FILE * fptr;
+  uint8_t key[32];
+  FILE * kfile;
+  FILE * infile;
+  FILE * outfile;
   
   while( (c = getopt_long (argc, argv, "ed123456789i:f:K:n:o:", long_options, NULL)) != -1)
   {
     switch (c)
     {
       case 'e':
-        user_opt->work = enc;
+        ctx->work = enc;
         break; 
       case 'd':
-        user_opt->work = dec;
+        ctx->work = dec;
         break; 
       case '1':
-        user_opt->mode = ECB128;
-        user_opt->ver = 128;
+        ctx->mode = ECB;
+        ctx->ver = 128;
         break; 
       case '2':
-        user_opt->mode = ECB192;
-        user_opt->ver = 192;
+        ctx->mode = ECB;
+        ctx->ver = 192;
         break; 
       case '3':
-        user_opt->mode = ECB256;
-        user_opt->ver = 256;
+        ctx->mode = ECB;
+        ctx->ver = 256;
         break; 
       case '4':
-        user_opt->mode = CBC128;
-        user_opt->ver = 128;
+        ctx->mode = CBC;
+        ctx->ver = 128;
         break;
       case '5':
-        user_opt->mode = CBC192;
-        user_opt->ver = 192;
+        ctx->mode = CBC;
+        ctx->ver = 192;
         break; 
       case '6':
-        user_opt->mode = CBC256;
-        user_opt->ver = 256;
+        ctx->mode = CBC;
+        ctx->ver = 256;
         break; 
       case '7':
-        user_opt->mode = CTR128;
-        user_opt->ver = 128;
+        ctx->mode = CTR;
+        ctx->ver = 128;
         break;
       case '8':
-        user_opt->mode = CTR192;
-        user_opt->ver = 192;
+        ctx->mode = CTR;
+        ctx->ver = 192;
         break;
       case '9':
-        user_opt->mode = CTR256;
-        user_opt->ver = 256;
+        ctx->mode = CTR;
+        ctx->ver = 256;
         break;
       case 'i':
-        memcpy(user_opt->iv, optarg, 16);
+        memcpy(ctx->iv, optarg, 16);
         break;
       case 'f':
         size = sizeof(optarg);
@@ -270,8 +258,8 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
           printf("kfile name too long\n");
           return -1;
         }        
-        user_opt->kfile = fopen(optarg, "rb+");
-        if (user_opt->kfile == NULL)
+        kfile = fopen(optarg, "rb+");
+        if (kfile == NULL)
         {
           printf("Can't open kfile: %s\n", optarg);
           return -1;
@@ -282,9 +270,9 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
         if (size > 32)
         {
           printf("This key is too long, only take first 32bytes\n");
-          memcpy(user_opt->key, optarg, 32);
+          memcpy(key, optarg, 32);
         } else {
-          memcpy(user_opt->key, optarg, size);
+          memcpy(key, optarg, size);
         }
         break;
       case 'n':
@@ -294,7 +282,10 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
           printf("in file name too long\n");
           return -1;
         }
-        memcpy(user_opt->input_file_name, optarg, size);
+        else if ((infile = fopen(optarg, "rb+")) == NULL)
+        {
+          printf("Can't open infile: %s\n", optarg);
+        }
         break;
       case 'o':
         size = sizeof(optarg);
@@ -303,36 +294,40 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
           printf("out file name too long\n");
           return -1;
         }
-        memcpy(user_opt->output_file_name, optarg, size);
+        else if ((outfile = fopen(optarg, "wb")) == NULL)
+        {
+          printf("Can't open outfile: %s\n", optarg);
+        }
         break;
     }
   }
 
   //read key from kfile
-  if (user_opt->kfile != NULL)
+  if (kfile != NULL)
   {
-    switch (user_opt->ver)
+    switch (ctx->ver)
     {
     case 128:
-      if (fread(user_opt->key, 1, 16, user_opt->kfile) < 16)
+      if (fread(key, 1, 16, kfile) < 16)
         printf("The key in the kfile file is too short, remaining key will be 0\n");
       break;
 
     case 192:
-      if (fread(user_opt->key, 1, 24, user_opt->kfile) < 16)
+      if (fread(key, 1, 24, kfile) < 16)
         printf("The key in the kfile file is too short, remaining key will be 0\n");
       break;
 
     case 256:
-      if (fread(user_opt->key, 1, 32, user_opt->kfile) < 16)
+      if (fread(key, 1, 32, kfile) < 16)
         printf("The key in the kfile file is too short, remaining key will be 0\n");
       break;
 
     default:
-      printf("Unknow Error in get_user_opt:kfile to key\n");
+      printf("Unknow Error in get_ctx:kfile to key\n");
       break;
     }
-
+    
+    ctx_init(ctx, key);
   }
 
   return 0;
@@ -340,7 +335,7 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
 
 int main(int argc, char *argv[])
 {
-  struct aes_opt user_opt;
-  get_user_opt(argc, argv, &user_opt);
+  struct aes_ctx ctx;
+  get_ctx(argc, argv, &ctx);
   return 0;
 }

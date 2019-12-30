@@ -279,25 +279,22 @@ static void xorWithIv(uint8_t* buf, const uint8_t* iv)
 /* Public Functions: */
 /*********************/
 
-void ctx_init(struct aes_ctx* ctx, const uint8_t* key, unsigned aes_version)
+void ctx_init(struct aes_ctx* ctx, const uint8_t* key)
 {
   ctx->Nb = 4;
-  switch (aes_version)
+  switch (ctx->ver)
   {
     case 128 :
       ctx->Nk = 4;
       ctx->Nr = 10;
-      ctx->ver = 128;
       break;
     case 192 :
       ctx->Nk = 6;
       ctx->Nr = 12;
-      ctx->ver = 192;
       break;
     case 256 :
       ctx->Nk = 8;
       ctx->Nr = 14;
-      ctx->ver = 256;
       break;
     default :
       printf("Error in aes.c: ctx_init(), can't pharse aes_version.\nPlease check you pass 128, 192 or 256 to this function\n");
@@ -306,25 +303,22 @@ void ctx_init(struct aes_ctx* ctx, const uint8_t* key, unsigned aes_version)
   keyExpansion(ctx, key);
 }
 
-void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, unsigned aes_version)
+void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv)
 {
   ctx->Nb = 4;
-  switch (aes_version)
+  switch (ctx->ver)
   {
     case 128 :
       ctx->Nk = 4;
       ctx->Nr = 10;
-      ctx->ver = 128;
       break;
     case 192 :
       ctx->Nk = 6;
       ctx->Nr = 12;
-      ctx->ver = 192;
       break;
     case 256 :
       ctx->Nk = 8;
       ctx->Nr = 14;
-      ctx->ver = 256;
       break;
     default :
       printf("Error in aes.c: ctx_init_iv(), can't pharse aes_version.\nPlease check you pass 128, 192 or 256 to this function\n");

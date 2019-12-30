@@ -1,16 +1,22 @@
 #ifndef _AES_h_
 #define _AES_h_
 #include <stdint.h>
+#include <stdio.h>
+
+typedef enum {ECB, CBC, CTR} MODE;
+typedef enum {enc, dec} WORK;
 
 struct aes_ctx
 {
   unsigned Nk, Nb, Nr, ver;
+  MODE mode;
+  WORK work;
   uint8_t roundKey[240];
   uint8_t iv[16];
 };
 
-void ctx_init(struct aes_ctx* ctx, const uint8_t* key, unsigned aes_version);
-void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv, unsigned aes_version);
+void ctx_init(struct aes_ctx* ctx, const uint8_t* key);
+void ctx_init_iv(struct aes_ctx* ctx, const uint8_t* key, const uint8_t* iv);
 
 void AES_ECB_encrypt(const struct aes_ctx* ctx, uint8_t* buf);
 void AES_ECB_decrypt(const struct aes_ctx* ctx, uint8_t* buf);
