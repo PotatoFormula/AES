@@ -339,27 +339,11 @@ void encrypt_file(struct aes_ctx *ctx)
   size_t size;
   void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
 
-  switch (ctx->work)
+  switch (ctx->mode)
   {
-  case enc:
-    switch (ctx->mode)
-    {
-      case ECB: cipher = AES_ECB_encrypt_buffer; break;
-      case CBC: cipher = AES_CBC_encrypt_buffer; break;
-      case CTR: cipher = AES_CTR_xcrypt_buffer; break;
-    }
-    break;
-  case dec:
-    switch (ctx->mode)
-    {
-      case ECB: cipher = AES_ECB_decrypt_buffer; break;
-      case CBC: cipher = AES_CBC_decrypt_buffer; break;
-      case CTR: cipher = AES_CTR_xcrypt_buffer; break;
-    }
-  
-  default:
-    printf("Can't choose aes mode\n");
-    break;
+    case ECB: cipher = AES_ECB_encrypt_buffer; break;
+    case CBC: cipher = AES_CBC_encrypt_buffer; break;
+    case CTR: cipher = AES_CTR_xcrypt_buffer; break;
   }
 
   while (!feof(ctx->infile))
