@@ -400,7 +400,7 @@ void decrypt_file(struct aes_ctx *ctx)
 
       for (int i = padding_len; i > 0; --i)
       {
-        printf("%d ", buffer[size]);
+        printf("%d ", buffer[size - 1]);
         --size;
       }
       printf("\n");
