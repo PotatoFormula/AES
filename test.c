@@ -308,47 +308,39 @@ int get_user_opt(int argc, char *argv[], struct aes_opt *user_opt)
     }
   }
 
-  return 0;
-}
-
-void parse_opt(struct aes_opt *user_opt)
-{
-  switch (user_opt->work)
-  {
-  case enc:
-    printf("set enc\n");
-    break;
-
-  case dec:
-    printf("set dec\n");
-    break;
-  
-  default:
-    printf("You have to choose encrypt or decrypt by --enc or --dec\n");
-    break;
-  }
-
-  switch (user_opt->mode)
-  {
-  case ECB128:
-    printf("ecb128\n");
-    break;
-  
-  default:
-    printf("No mode been choose\n");
-    break;
-  }
-
+  //read key from kfile
   if (user_opt->kfile != NULL)
   {
-    printf("Now we have kfile!\n");
+    switch (user_opt->ver)
+    {
+    case 128:
+      if (fread(user_opt->key, 1, 16, user_opt->kfile) < 16)
+        printf("The key in the kfile file is too short, remaining key will be 0\n");
+      break;
+
+    case 192:
+      if (fread(user_opt->key, 1, 24, user_opt->kfile) < 16)
+        printf("The key in the kfile file is too short, remaining key will be 0\n");
+      break;
+
+    case 256:
+      if (fread(user_opt->key, 1, 32, user_opt->kfile) < 16)
+        printf("The key in the kfile file is too short, remaining key will be 0\n");
+      break;
+
+    default:
+      printf("Unknow Error in get_user_opt:kfile to key\n");
+      break;
+    }
+
   }
+
+  return 0;
 }
 
 int main(int argc, char *argv[])
 {
   struct aes_opt user_opt;
   get_user_opt(argc, argv, &user_opt);
-  parse_opt(&user_opt);
   return 0;
 }
