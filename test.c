@@ -121,7 +121,7 @@ static int test_encrypt_ecb(void)
   struct aes_ctx ctx;
   ctx.ver = 256;
   ctx_init(&ctx, key);
-  AES_ECB_encrypt(&ctx, in);
+  AES_ECB_encrypt(&ctx, in, 0);
   printf("ECB encrypt: ");
   if (0 == memcmp((char*) out, (char*) in, 16)) {
     printf("SUCCESS!\n");
@@ -144,7 +144,7 @@ static int test_decrypt_ecb(void)
     struct aes_ctx ctx;
     ctx.ver = 256;
     ctx_init(&ctx, key);
-    AES_ECB_decrypt(&ctx, in);
+    AES_ECB_decrypt(&ctx, in, 0);
 
     printf("ECB decrypt: ");
 
