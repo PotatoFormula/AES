@@ -196,8 +196,13 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 
   char c;
   int size;
-  uint8_t key[32];
+  uint8_t key[32] = {0};
   FILE * kfile = NULL;
+  //init iv to zero
+  for(int i = 0; i < 16; ++i)
+  {
+    ctx->iv[i] = 0;
+  }
   
   while( (c = getopt_long (argc, argv, "ed123456789i:f:K:n:o:", long_options, NULL)) != -1)
   {
