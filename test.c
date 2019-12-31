@@ -171,22 +171,22 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 
   struct option long_options[] = {
 
-    {"enc", 0, NULL, 'e'},
-    {"dec", 0, NULL, 'd'},
-    {"ecb128", 0, NULL, '1'}, 
-    {"ecb192", 0, NULL, '2'}, 
-    {"ecb256", 0, NULL, '3'}, 
-    {"cbc128", 0, NULL, '4'}, 
-    {"cbc192", 0, NULL, '5'}, 
-    {"cbc256", 0, NULL, '6'}, 
-    {"ctr128", 0, NULL, '7'}, 
-    {"ctr192", 0, NULL, '8'}, 
-    {"ctr256", 0, NULL, '9'},
-    {"iv", 1, NULL, 'i'},
-    {"kfile", 1, NULL, 'f'},
-    {"K", 1, NULL, 'K'},
-    {"in", 1, NULL, 'n'},
-    {"out", 1, NULL, 'o'},
+    {"enc", no_argument, NULL, 'e'},
+    {"dec", no_argument, NULL, 'd'},
+    {"ecb128", no_argument, NULL, '1'}, 
+    {"ecb192", no_argument, NULL, '2'}, 
+    {"ecb256", no_argument, NULL, '3'}, 
+    {"cbc128", no_argument, NULL, '4'}, 
+    {"cbc192", no_argument, NULL, '5'}, 
+    {"cbc256", no_argument, NULL, '6'}, 
+    {"ctr128", no_argument, NULL, '7'}, 
+    {"ctr192", no_argument, NULL, '8'}, 
+    {"ctr256", no_argument, NULL, '9'},
+    {"iv", required_argument, NULL, 'i'},
+    {"kfile", required_argument, NULL, 'f'},
+    {"K", required_argument, NULL, 'K'},
+    {"in", required_argument, NULL, 'n'},
+    {"out", required_argument, NULL, 'o'},
 
 
     {0, 0, 0, 0}
