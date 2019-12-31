@@ -393,13 +393,11 @@ void decrypt_file(struct aes_ctx *ctx)
     if (size < buf_len)
     {
       padding_len = buffer[size - 1];
+      
+      //debug print
+      printf("%d ", padding_len);
 
-      for (int i = padding_len; i > 0; --i)
-      {
-        printf("%d ", buffer[size - 1]);
-        --size;
-      }
-      printf("\n");
+      size -= padding_len;
     }
 
     //write to file
@@ -413,5 +411,13 @@ int main(int argc, char *argv[])
   get_ctx(argc, argv, &ctx);
   if (ctx.work == enc) encrypt_file(&ctx);
   else if(ctx.work == dec) decrypt_file(&ctx);
+
+  //print key
+  printf("Key:\n");
+  for(int i = 0; i < 240; ++i)
+  {
+    printf("%x ", ctx.roundKey[i]);
+  }
+  printf("\n");
   return 0;
 }
