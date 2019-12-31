@@ -249,7 +249,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         memcpy(ctx->iv, optarg, 16);
         break;
       case 'f':
-        size = sizeof(optarg);
+        size = strlen(optarg);
         if (size > 255) 
         {
           printf("kfile name too long\n");
@@ -263,7 +263,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         }
         break;
       case 'K':
-        size = sizeof(optarg);
+        size = strlen(optarg);
         if (size > 32)
         {
           printf("This key is too long, only take first 32bytes\n");
@@ -273,7 +273,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         }
         break;
       case 'n':
-        size = sizeof(optarg);
+        size = strlen(optarg);
         if (size > 255)
         {
           printf("in file name too long\n");
@@ -285,7 +285,7 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         }
         break;
       case 'o':
-        size = sizeof(optarg);
+        size = strlen(optarg);
         if (size > 255)
         {
           printf("out file name too long\n");
