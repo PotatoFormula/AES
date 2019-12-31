@@ -166,7 +166,7 @@ void test_all()
   test_decrypt_ecb();
 }
 
-int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
+int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 {
 
   struct option long_options[] = {
@@ -434,7 +434,7 @@ void decrypt_file(struct aes_ctx *ctx)
 int main(int argc, char *argv[])
 {
   struct aes_ctx ctx;
-  get_ctx(argc, argv, &ctx);
+  set_ctx(argc, argv, &ctx);
   if (ctx.work == enc) encrypt_file(&ctx);
   else if(ctx.work == dec) decrypt_file(&ctx);
 
