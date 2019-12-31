@@ -400,7 +400,7 @@ void decrypt_file(struct aes_ctx *ctx)
       padding_len = buffer[size - 1];
       
       //debug print
-      printf("depadding: %d ", padding_len);
+      printf("depadding: %d\n", padding_len);
 
       size -= padding_len;
     }
