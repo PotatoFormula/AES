@@ -424,5 +424,13 @@ int main(int argc, char *argv[])
     printf("%x ", ctx.roundKey[i]);
   }
   printf("\n");
+
+  //printf iv
+  printf("iv:\n");
+  for(int i = 0; i < 16; ++i)
+  {
+    printf("%x ", ctx.iv[i]);
+  }
+  printf("\n");
   return 0;
 }
