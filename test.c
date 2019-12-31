@@ -342,13 +342,12 @@ void encrypt_file(struct aes_ctx *ctx)
   unsigned padding_len;
   uint8_t buffer[buf_len];
   size_t size;
-  void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
 
   switch (ctx->mode)
   {
-    case ECB: cipher = AES_ECB_encrypt_buffer; break;
-    case CBC: cipher = AES_CBC_encrypt_buffer; break;
-    case CTR: cipher = AES_CTR_xcrypt_buffer; break;
+    case ECB: ctx->AES_crypt = AES_ECB_encrypt_buffer; break;
+    case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
+    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
   }
 
   while (!feof(ctx->infile))
@@ -367,7 +366,7 @@ void encrypt_file(struct aes_ctx *ctx)
       }
     }
 
-    cipher(ctx, buffer, size);
+    ctx->AES_crypt(ctx, buffer, size);
     //write to file
     fwrite(buffer, 1, size, ctx->outfile);
   }
@@ -383,16 +382,16 @@ void decrypt_file(struct aes_ctx *ctx)
 
   switch (ctx->mode)
   {
-    case ECB: cipher = AES_ECB_decrypt_buffer; break;
-    case CBC: cipher = AES_CBC_decrypt_buffer; break;
-    case CTR: cipher = AES_CTR_xcrypt_buffer; break;
+    case ECB: ctx->AES_crypt = AES_ECB_decrypt_buffer; break;
+    case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
+    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
   }
 
   while (!feof(ctx->infile))
   {
     size = fread(buffer, 1, buf_len, ctx->infile);
     
-    cipher(ctx, buffer, size);
+    ctx->AES_crypt(ctx, buffer, size);
 
     //Depadding if reach end of file
     if (size < buf_len)

@@ -15,6 +15,7 @@ struct aes_ctx
   uint8_t iv[16];
   FILE * infile;
   FILE * outfile;
+  void (*AES_crypt)(struct aes_ctx *, uint8_t *, uint32_t);
 };
 
 void ctx_init(struct aes_ctx* ctx, const uint8_t* key);
