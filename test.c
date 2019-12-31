@@ -353,7 +353,6 @@ void encrypt_file(struct aes_ctx *ctx)
     //Padding if reach end of file
     if (size < buf_len)
     {
-      printf("enc size before padding = %d\n", size);
       padding_len = 16 - (size % 16);
 
       for (int i = 0; i < padding_len; ++i)
