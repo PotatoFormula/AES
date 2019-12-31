@@ -329,7 +329,29 @@ int get_ctx(int argc, char *argv[], struct aes_ctx *ctx)
       break;
     }
     fclose(kfile);
-    
+  }
+
+  switch (ctx->work)
+  {
+  case enc:
+    switch (ctx->mode)
+    {
+    case ECB: ctx->AES_crypt = AES_ECB_encrypt_buffer; break;
+    case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
+    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
+    }
+    break;
+  case dec:
+    switch (ctx->mode)
+    {
+    case ECB: ctx->AES_crypt = AES_ECB_decrypt_buffer; break;
+    case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
+    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
+    }
+    break;
+  default:
+    printf("--enc or --dec is requied\n");
+    break;
   }
 
   ctx_init(ctx, key);
@@ -343,12 +365,12 @@ void encrypt_file(struct aes_ctx *ctx)
   uint8_t buffer[buf_len];
   size_t size;
 
-  switch (ctx->mode)
-  {
-    case ECB: ctx->AES_crypt = AES_ECB_encrypt_buffer; break;
-    case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
-    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
-  }
+  // switch (ctx->mode)
+  // {
+  //   case ECB: ctx->AES_crypt = AES_ECB_encrypt_buffer; break;
+  //   case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
+  //   case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
+  // }
 
   while (!feof(ctx->infile))
   {
@@ -380,12 +402,12 @@ void decrypt_file(struct aes_ctx *ctx)
   size_t size;
   void (*cipher) (struct aes_ctx *, uint8_t *, uint32_t);
 
-  switch (ctx->mode)
-  {
-    case ECB: ctx->AES_crypt = AES_ECB_decrypt_buffer; break;
-    case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
-    case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
-  }
+  // switch (ctx->mode)
+  // {
+  //   case ECB: ctx->AES_crypt = AES_ECB_decrypt_buffer; break;
+  //   case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
+  //   case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
+  // }
 
   while (!feof(ctx->infile))
   {
