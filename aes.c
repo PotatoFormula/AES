@@ -411,3 +411,17 @@ void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     buf[i] = (buf[i] ^ counter[ctri]);
   }
 }
+
+//Symmetric cipher encrypt and decrypt use same function
+void AES_OFB_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  for(i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    cipher((state_t*)iv, ctx);
+    xorWithIv(buf, iv);
+    buf += AES_BLOCKLEN;
+  }
+}
