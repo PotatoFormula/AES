@@ -425,3 +425,33 @@ void AES_OFB_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     buf += AES_BLOCKLEN;
   }
 }
+
+void AES_CFB_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  for (i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    cipher((state_t*)iv, ctx);
+    xorWithIv(buf, iv);
+    iv = buf;
+    buf += AES_BLOCKLEN;
+  }
+}
+
+void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint8_t stored_next_iv[AES_BLOCKLEN];
+  uint32_t i;
+
+  for (i = 0; i < buf_len; i += AES_BLOCKLEN)
+  {
+    memcpy(stored_next_iv, buf, AES_BLOCKLEN);
+    cipher(iv, ctx);
+    xorWithIv(buf, iv);
+    buf += AES_BLOCKLEN;
+    memcpy(iv, stored_next_iv, AES_BLOCKLEN);
+  }
+}
