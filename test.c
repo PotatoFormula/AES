@@ -176,7 +176,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     {"128", no_argument, NULL, '1'}, 
     {"192", no_argument, NULL, '2'}, 
     {"256", no_argument, NULL, '3'},
-    {"ECB", no_argument< NULL, 'C'},
+    {"ECB", no_argument, NULL, 'C'},
     {"CBC", no_argument, NULL, 'B'},
     {"CTR", no_argument, NULL, 'T'},
     {"OFB", no_argument, NULL, 'O'},
