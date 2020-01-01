@@ -176,7 +176,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     {"128", no_argument, NULL, '1'}, 
     {"192", no_argument, NULL, '2'}, 
     {"256", no_argument, NULL, '3'},
-    {"ECB", no_argument< NULL, 'E'},
+    {"ECB", no_argument< NULL, 'C'},
     {"CBC", no_argument, NULL, 'B'},
     {"CTR", no_argument, NULL, 'T'},
     {"OFB", no_argument, NULL, 'O'},
@@ -221,7 +221,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
       case '3':
         ctx->ver = 256;
         break;
-      case 'E':
+      case 'C':
         ctx->mode = ECB;
         break;
       case 'B':
