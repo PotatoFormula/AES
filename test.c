@@ -173,15 +173,13 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
 
     {"enc", no_argument, NULL, 'e'},
     {"dec", no_argument, NULL, 'd'},
-    {"ecb128", no_argument, NULL, '1'}, 
-    {"ecb192", no_argument, NULL, '2'}, 
-    {"ecb256", no_argument, NULL, '3'}, 
-    {"cbc128", no_argument, NULL, '4'}, 
-    {"cbc192", no_argument, NULL, '5'}, 
-    {"cbc256", no_argument, NULL, '6'}, 
-    {"ctr128", no_argument, NULL, '7'}, 
-    {"ctr192", no_argument, NULL, '8'}, 
-    {"ctr256", no_argument, NULL, '9'},
+    {"128", no_argument, NULL, '1'}, 
+    {"192", no_argument, NULL, '2'}, 
+    {"256", no_argument, NULL, '3'},
+    {"ECB", no_argument< NULL, 'E'},
+    {"CBC", no_argument, NULL, 'B'},
+    {"CTR", no_argument, NULL, 'T'},
+    {"OFB", no_argument, NULL, 'O'},
     {"iv", required_argument, NULL, 'i'},
     {"kfile", required_argument, NULL, 'f'},
     {"K", required_argument, NULL, 'K'},
@@ -215,40 +213,25 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         ctx->work = dec;
         break; 
       case '1':
-        ctx->mode = ECB;
         ctx->ver = 128;
         break; 
       case '2':
-        ctx->mode = ECB;
         ctx->ver = 192;
         break; 
       case '3':
+        ctx->ver = 256;
+        break;
+      case 'E':
         ctx->mode = ECB;
-        ctx->ver = 256;
-        break; 
-      case '4':
-        ctx->mode = CBC;
-        ctx->ver = 128;
         break;
-      case '5':
+      case 'B':
         ctx->mode = CBC;
-        ctx->ver = 192;
-        break; 
-      case '6':
-        ctx->mode = CBC;
-        ctx->ver = 256;
-        break; 
-      case '7':
-        ctx->mode = CTR;
-        ctx->ver = 128;
         break;
-      case '8':
+      case 'T':
         ctx->mode = CTR;
-        ctx->ver = 192;
         break;
-      case '9':
-        ctx->mode = CTR;
-        ctx->ver = 256;
+      case 'O':
+        ctx->mode = OFB;
         break;
       case 'i':
         memcpy(ctx->iv, optarg, 16);
