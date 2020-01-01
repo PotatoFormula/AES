@@ -180,6 +180,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     {"CBC", no_argument, NULL, 'B'},
     {"CTR", no_argument, NULL, 'T'},
     {"OFB", no_argument, NULL, 'O'},
+    {"CFB", no_argument, NULL, 'F'},
     {"iv", required_argument, NULL, 'i'},
     {"kfile", required_argument, NULL, 'f'},
     {"K", required_argument, NULL, 'K'},
@@ -232,6 +233,9 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         break;
       case 'O':
         ctx->mode = OFB;
+        break;
+      case 'F':
+        ctx->mode = CFB;
         break;
       case 'i':
         memcpy(ctx->iv, optarg, 16);
