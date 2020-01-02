@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-typedef enum {ECB, CBC, CTR, OFB, CFB, OFB8, CFB8} MODE;
+typedef enum {ECB, CBC, CTR, OFB, CFB, OFB8, CFB8, OFB1} MODE;
 typedef enum {enc, dec} WORK;
 
 struct aes_ctx
@@ -32,6 +32,8 @@ void AES_CTR_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 void AES_OFB_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 
 void AES_OFB8_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
+
+void AES_OFB1_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 
 void AES_CFB_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
