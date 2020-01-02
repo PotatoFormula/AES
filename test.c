@@ -184,6 +184,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     {"OFB1", no_argument, NULL, '7'},
     {"CFB", no_argument, NULL, 'F'},
     {"CFB8", no_argument, NULL, '8'},
+    {"CFB1", no_argument, NULL, '9'},
     {"iv", required_argument, NULL, 'i'},
     {"kfile", required_argument, NULL, 'f'},
     {"K", required_argument, NULL, 'K'},
@@ -248,6 +249,9 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         break;
       case '8':
         ctx->mode = CFB8;
+        break;
+      case '9':
+        ctx->mode = CFB1;
         break;
       case 'i':
         memcpy(ctx->iv, optarg, 16);
@@ -343,6 +347,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case OFB1: ctx->AES_crypt = AES_OFB1_xcrypt_buffer; break;
     case CFB: ctx->AES_crypt = AES_CFB_encrypt_buffer; break;
     case CFB8: ctx->AES_crypt = AES_CFB8_encrypt_buffer; break;
+    case CFB1: ctx->AES_crypt = AES_CFB1_encrypt_buffer; break;
     }
     break;
   case dec:
@@ -356,6 +361,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case OFB1: ctx->AES_crypt = AES_OFB1_xcrypt_buffer; break;
     case CFB: ctx->AES_crypt = AES_CFB_decrypt_buffer; break;
     case CFB8: ctx->AES_crypt = AES_CFB8_decrypt_buffer; break;
+    case CFB1: ctx->AES_crypt = AES_CFB1_decrypt_buffer; break;
     }
     break;
   default:
