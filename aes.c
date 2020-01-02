@@ -440,7 +440,7 @@ void AES_CFB_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
   }
 
   //store iv for next call
-  memcyp(ctx->iv, iv, AES_BLOCKLEN);
+  memcpy(ctx->iv, iv, AES_BLOCKLEN);
 }
 
 void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
