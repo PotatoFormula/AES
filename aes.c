@@ -275,6 +275,20 @@ static void xorWithIv(uint8_t* buf, const uint8_t* iv)
     buf[i] = buf[i] ^ iv[i];
 }
 
+static void xorWithIv8(uint8_t* buf, const uint8_t *iv)
+{
+  buf[0] = buf[0] ^ iv[0];
+}
+
+static void shiftIv8(uint8_t* iv)
+{
+  for(int i = 0; i < 15; ++i)
+  {
+    iv[i] = iv[i+1];
+  }
+  iv[15] = 0;
+}
+
 /*********************/
 /* Public Functions: */
 /*********************/
@@ -453,5 +467,37 @@ void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     xorWithIv(buf, iv);
     buf += AES_BLOCKLEN;
     memcpy(iv, stored_next_iv, AES_BLOCKLEN);
+  }
+}
+
+void AES_CFB8_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  for (i = 0; i < buf_len; i += 1)
+  {
+    cipher((state_t*)iv, ctx);
+    xorWithIv8(buf, iv);
+    shiftIv8(iv);
+    memcpy(iv + 15, buf, 1);
+    buf += 1;
+  }
+}
+
+void AES_CFB8_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint8_t stored_next_iv[1];
+  uint32_t i;
+
+  for (i = 0; i < buf_len; i += 1)
+  {
+    memcpy(stored_next_iv, buf, 1);
+    cipher((state_t*)iv, ctx);
+    xorWithIv8(buf, iv);
+    shiftIv8(iv);
+    buf += 1;
+    memcpy(iv + 15, stored_next_iv, 1);
   }
 }
