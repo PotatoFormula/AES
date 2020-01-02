@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-typedef enum {ECB, CBC, CTR, OFB, CFB, CFB8} MODE;
+typedef enum {ECB, CBC, CTR, OFB, CFB, OFB8, CFB8} MODE;
 typedef enum {enc, dec} WORK;
 
 struct aes_ctx

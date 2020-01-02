@@ -180,6 +180,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     {"CBC", no_argument, NULL, 'B'},
     {"CTR", no_argument, NULL, 'T'},
     {"OFB", no_argument, NULL, 'O'},
+    {"OFB8", no_argument, NULL, '6'},
     {"CFB", no_argument, NULL, 'F'},
     {"CFB8", no_argument, NULL, '8'},
     {"iv", required_argument, NULL, 'i'},
@@ -237,6 +238,9 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
         break;
       case 'F':
         ctx->mode = CFB;
+        break;
+      case '6':
+        ctx->mode = OFB8;
         break;
       case '8':
         ctx->mode = CFB8;
@@ -331,6 +335,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
     case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
     case OFB: ctx->AES_crypt = AES_OFB_xcrypt_buffer; break;
+    case OFB8: ctx->AES_crypt = AES_OFB8_xcrypt_buffer; break;
     case CFB: ctx->AES_crypt = AES_CFB_encrypt_buffer; break;
     case CFB8: ctx->AES_crypt = AES_CFB8_encrypt_buffer; break;
     }
@@ -342,6 +347,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
     case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
     case OFB: ctx->AES_crypt = AES_OFB_xcrypt_buffer; break;
+    case OFB8: ctx->AES_crypt = AES_OFB8_xcrypt_buffer; break;
     case CFB: ctx->AES_crypt = AES_CFB_decrypt_buffer; break;
     case CFB8: ctx->AES_crypt = AES_CFB8_decrypt_buffer; break;
     }
