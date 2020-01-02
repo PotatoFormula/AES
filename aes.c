@@ -280,6 +280,13 @@ static void xorWithIv8(uint8_t* buf, const uint8_t *iv)
   buf[0] = buf[0] ^ iv[0];
 }
 
+static void xorWithIv1(uint8_t *buf, const uint8_t *iv, int bits)
+{
+  uint8_t leftmostiv = iv[0] & 0x80;
+  leftmostiv >> bits;
+  *buf ^= leftmostiv;
+}
+
 static void shiftIv8(uint8_t* iv)
 {
   for(int i = 0; i < 15; ++i)
@@ -289,15 +296,40 @@ static void shiftIv8(uint8_t* iv)
   iv[15] = 0;
 }
 
+static void shiftIv1(uint8_t *iv)
+{
+  uint8_t leftmostbit[AES_BLOCKLEN];
+  memcpy(leftmostbit, iv, AES_BLOCKLEN);
+  for(int i = 0; i < AES_BLOCKLEN; ++i)
+  {
+    leftmostbit[i] = leftmostbit[i] >> 7;
+  }
+
+  for(int i = 0; i < AES_BLOCKLEN; ++i)
+  {
+    iv[i] = iv[i] << 1;
+  }
+
+  for(int i = 0; i < (AES_BLOCKLEN - 1); ++i)
+  {
+    iv[i] = iv[i] + leftmostbit[i+1];
+  }
+}
+
 static void rotIv8(uint8_t *iv)
 {
   uint8_t u8tmp;
   u8tmp = iv[0];
-  for(int i = 0; i < 15; ++i)
-  {
-    iv[i] = iv[i+1];
-  }
+  shiftIv8(iv);
   iv[15] = u8tmp;
+}
+
+static void rotIv1(uint8_t *iv)
+{
+  uint8_t leftmostbit;
+  leftmostbit = (iv[0] >> 7);
+  shiftIv1(iv);
+  iv[15] += leftmostbit;
 }
 
 /*********************/
@@ -462,6 +494,25 @@ void AES_OFB8_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     xorWithIv8(buf, iv);
     buf += 1;
     rotIv8(iv);
+  }
+}
+
+void AES_OFB1_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  //byte level operation
+  for(i = 0; i < buf_len; ++i)
+  {
+    //bit level operation
+    for(uint8_t bits = 0; bits < 8; ++bits)
+    {
+      cipher((state_t*)iv, ctx);
+      xorWithIv1(buf, iv, bits);
+      rotIv1(iv);
+    }
+    buf += 1;
   }
 }
 
