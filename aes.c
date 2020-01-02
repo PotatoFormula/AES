@@ -289,6 +289,17 @@ static void shiftIv8(uint8_t* iv)
   iv[15] = 0;
 }
 
+static void rotIv8(uint8_t *iv)
+{
+  uint8_t u8tmp;
+  u8tmp = iv[0];
+  for(int i = 0; i < 15; ++i)
+  {
+    iv[i] = iv[i+1];
+  }
+  iv[15] = u8tmp;
+}
+
 /*********************/
 /* Public Functions: */
 /*********************/
@@ -437,6 +448,20 @@ void AES_OFB_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
     cipher((state_t*)iv, ctx);
     xorWithIv(buf, iv);
     buf += AES_BLOCKLEN;
+  }
+}
+
+void AES_OFB8_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  for(i = 0; i < buf_len; ++i)
+  {
+    cipher((state_t*)iv, ctx);
+    xorWithIv8(buf, iv);
+    buf += 1;
+    rotIv8(iv);
   }
 }
 
