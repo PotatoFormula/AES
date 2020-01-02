@@ -283,7 +283,7 @@ static void xorWithIv8(uint8_t* buf, const uint8_t *iv)
 static void xorWithIv1(uint8_t *buf, const uint8_t *iv, int bits)
 {
   uint8_t leftmostiv = iv[0] & 0x80;
-  leftmostiv >> bits;
+  leftmostiv = leftmostiv >> bits;
   *buf ^= leftmostiv;
 }
 
