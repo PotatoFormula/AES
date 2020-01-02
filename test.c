@@ -327,6 +327,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case CBC: ctx->AES_crypt = AES_CBC_encrypt_buffer; break;
     case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
     case OFB: ctx->AES_crypt = AES_OFB_xcrypt_buffer; break;
+    case CFB: ctx->AES_crypt = AES_CFB_encrypt_buffer; break;
     }
     break;
   case dec:
@@ -336,6 +337,7 @@ int set_ctx(int argc, char *argv[], struct aes_ctx *ctx)
     case CBC: ctx->AES_crypt = AES_CBC_decrypt_buffer; break;
     case CTR: ctx->AES_crypt = AES_CTR_xcrypt_buffer; break;
     case OFB: ctx->AES_crypt = AES_OFB_xcrypt_buffer; break;
+    case CFB: ctx->AES_crypt = AES_CFB_decrypt_buffer; break;
     }
     break;
   default:
