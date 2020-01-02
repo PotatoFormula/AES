@@ -435,12 +435,9 @@ void AES_CFB_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
   {
     cipher((state_t*)iv, ctx);
     xorWithIv(buf, iv);
-    iv = buf;
+    memcpy(iv, buf, AES_BLOCKLEN);
     buf += AES_BLOCKLEN;
   }
-
-  //store iv for next call
-  memcpy(ctx->iv, iv, AES_BLOCKLEN);
 }
 
 void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
