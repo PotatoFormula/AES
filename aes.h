@@ -33,4 +33,7 @@ void AES_OFB_xcrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 
 void AES_CFB_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 void AES_CFB_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
+
+void AES_CFB8_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
+void AES_CFB8_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len);
 #endif // _AES_h_
