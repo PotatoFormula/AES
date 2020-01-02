@@ -577,3 +577,47 @@ void AES_CFB8_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len
     memcpy(iv + 15, stored_next_iv, 1);
   }
 }
+
+void AES_CFB1_encrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint32_t i;
+
+  //byte level operation
+  for (i = 0; i < buf_len; i += 1)
+  {
+    //bit level operation
+    for (int bits = 0; bits < 8; ++bits)
+    {
+      cipher((state_t*)iv, ctx);
+      xorWithIv1(buf, iv, bits);
+      shiftIv1(iv);
+      iv[15] += ((*buf) >> (7 - bits)) & 0x01;
+    }
+    buf += 1;
+  }
+}
+
+void AES_CFB1_decrypt_buffer(struct aes_ctx *ctx, uint8_t *buf, uint32_t buf_len)
+{
+  uint8_t *iv = ctx->iv;
+  uint8_t stored_next_iv[1];
+  uint32_t i;
+
+  //byte level operation
+  for (i = 0; i < buf_len; i += 1)
+  {
+    memcpy(stored_next_iv, buf, 1);
+
+    //bit level operation
+    for(int bits = 0; bits < 8; ++bits)
+    {
+      cipher((state_t*)iv, ctx);
+      xorWithIv1(buf, iv, bits);
+      shiftIv1(iv);
+      iv[15] += ((*stored_next_iv) >> (7 - bits)) & 0x01;
+    }
+
+    buf += 1;
+  }
+}
